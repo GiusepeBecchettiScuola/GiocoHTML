@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,15 +8,30 @@
     <style>
         body {
             position: fixed;
-            background: url(GeoSfondo.png);
+            background: url(GeoSfondo2.png);
             background-repeat: repeat-x;
+         
+        }
+        #cubo {
+            width: 100px;
+            height: 100px;
+            left: 10px;
+            right: 10px;
+            bottom: 45px;
+            position: fixed;
+        }
+        #barraNera{
+            background-color: black;
+            width: 100%;
+            position: fixed;
+            top:95%;
+            left:0;
+            height: 500px;
         }
     </style>
     <script>
         "use strict";
-        function inter() {
-            let intervalli = window.setInterval(muoviSfondo, 10);
-        }
+        let intervalli = 1
         let sinistra = 0;
         function muoviSfondo() {
             console.log("c")
@@ -23,43 +39,49 @@
             sinistra -= 10;
             sfondo.style.backgroundPositionX = `${sinistra}px`;
         }
-       
-        function muovi(mkz) {
+        function inter(mkz) {
+            console.log(intervalli)
             let padre = document.getElementsByTagName("body")[0];
             let cubo = document.querySelector("img");
-            console.log(mkz.key);
             if (mkz.key == " ") {
-                function collisione(obj1, obj2) {
-                    let coll = true;
-                    let img1 = obj1.getBoundingClientRect();
-                    let img2 = obj2.getBoundingClientRect();
-                    if (img1.y > img2.y + img2.height) {
-                        coll = false;
-                    }
-                    if (img2.x + img2.width < img1.x) {
-                        coll = false;
-                    }
-                    if (img1.x + img1.width < img2.x) {
-                        coll = false;
-                    }
-                    if (img1.y + img1.height < img2.y) {
-                        coll = false;
-                    }
-                    return coll;
-                }
-                let collision = collisione(missile, asteroide);
-                if (collision == true) {
-                    padre.removeChild(asteroide);
+                if (intervalli == 1) {
+                    intervalli = window.setInterval(muoviSfondo, 10);
                 }
             }
-            astro.style.left = sinistra + "px";
-            astro.style.top = sopra + "px";
+            /* function collisione(obj1, obj2) {
+                let coll = true;
+                let img1 = obj1.getBoundingClientRect();
+                let img2 = obj2.getBoundingClientRect();
+                if (img1.y > img2.y + img2.height) {
+                    coll = false;
+                }
+                if (img2.x + img2.width < img1.x) {
+                    coll = false;
+                }
+                if (img1.x + img1.width < img2.x) {
+                    coll = false;
+                }
+                if (img1.y + img1.height < img2.y) {
+                    coll = false;
+                }
+                return coll;
+            }
+            let collision = collisione(missile, asteroide);
+            if (collision == true) {
+                padre.removeChild(asteroide);
+            }
         }
+        astro.style.left = sinistra + "px";
+        astro.style.top = sopra + "px"; */
+        }
+
     </script>
 </head>
 
-<body  onload="inter()">
-    <img src="Cube001.webp" alt="cubo" style="left: 10px;right: 10px;top: 10px;bottom: 10px;
-    position: fixed;">
+<body onkeydown="inter(event)">
+    <img src="Cube001.webp" id="cubo" alt="cubo">
+    <div id="barraNera">.</div>
+    
 </body>
+
 </html>
