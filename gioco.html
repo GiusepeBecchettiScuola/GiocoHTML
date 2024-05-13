@@ -10,28 +10,44 @@
             position: fixed;
             background: url(GeoSfondo2.png);
             background-repeat: repeat-x;
-         
+
         }
+
         #cubo {
             width: 100px;
             height: 100px;
-            left: 10px;
+            left: 30px;
             right: 10px;
             bottom: 45px;
             position: fixed;
         }
-        #barraNera{
+
+        #barraNera {
             background-color: black;
             width: 100%;
             position: fixed;
-            top:95%;
-            left:0;
-            height: 500px;
+            top: 95%;
+            left: 0;
+            height: 50px;
+        }
+
+        .classeBlocco {
+            background-color: black;
+            border-color: white;
+            border-radius: 6px;
+            border-width: 10px;
+            width: 100px;
+            height: 100px;
+            position: fixed;
+            left: 400px;
+            bottom: 50px;
+
         }
     </style>
     <script>
         "use strict";
-        let intervalli = 1
+        //CODICE CHE MUOVE SFONDO   
+        let intervalli = 1;
         let sinistra = 0;
         function muoviSfondo() {
             console.log("c")
@@ -39,40 +55,22 @@
             sinistra -= 10;
             sfondo.style.backgroundPositionX = `${sinistra}px`;
         }
+        //CODICE RIGUARDO A SPACE
+        let yCubo = 40;
         function inter(mkz) {
-            console.log(intervalli)
             let padre = document.getElementsByTagName("body")[0];
+            let blocco = document.createElement("div");
+            blocco.classList.add("classeBlocco");
+            padre.appendChild(blocco);
+            console.log(intervalli)
             let cubo = document.querySelector("img");
             if (mkz.key == " ") {
+                yCubo += 250;
+                cubo.style.bottom = yCubo + "px";
                 if (intervalli == 1) {
                     intervalli = window.setInterval(muoviSfondo, 10);
                 }
             }
-            /* function collisione(obj1, obj2) {
-                let coll = true;
-                let img1 = obj1.getBoundingClientRect();
-                let img2 = obj2.getBoundingClientRect();
-                if (img1.y > img2.y + img2.height) {
-                    coll = false;
-                }
-                if (img2.x + img2.width < img1.x) {
-                    coll = false;
-                }
-                if (img1.x + img1.width < img2.x) {
-                    coll = false;
-                }
-                if (img1.y + img1.height < img2.y) {
-                    coll = false;
-                }
-                return coll;
-            }
-            let collision = collisione(missile, asteroide);
-            if (collision == true) {
-                padre.removeChild(asteroide);
-            }
-        }
-        astro.style.left = sinistra + "px";
-        astro.style.top = sopra + "px"; */
         }
 
     </script>
@@ -80,8 +78,7 @@
 
 <body onkeydown="inter(event)">
     <img src="Cube001.webp" id="cubo" alt="cubo">
-    <div id="barraNera">.</div>
-    
+    <div id="barraNera"></div>
 </body>
 
 </html>
