@@ -44,41 +44,72 @@
 
         }
     </style>
-    <script>
-        "use strict";
-        //CODICE CHE MUOVE SFONDO   
-        let intervalli = 1;
-        let sinistra = 0;
-        function muoviSfondo() {
-            console.log("c")
-            let sfondo = document.querySelector("body");
-            sinistra -= 10;
-            sfondo.style.backgroundPositionX = `${sinistra}px`;
-        }
-        //CODICE RIGUARDO A SPACE
-        let yCubo = 40;
-        function inter(mkz) {
-            let padre = document.getElementsByTagName("body")[0];
-            let blocco = document.createElement("div");
-            blocco.classList.add("classeBlocco");
-            padre.appendChild(blocco);
-            console.log(intervalli)
-            let cubo = document.querySelector("img");
-            if (mkz.key == " ") {
-                yCubo += 250;
-                cubo.style.bottom = yCubo + "px";
-                if (intervalli == 1) {
-                    intervalli = window.setInterval(muoviSfondo, 10);
-                }
-            }
-        }
 
-    </script>
 </head>
 
-<body onkeydown="inter(event)">
+<body onkeydown="inter(event)" onload="posizionaBlocchi()">
     <img src="Cube001.webp" id="cubo" alt="cubo">
     <div id="barraNera"></div>
 </body>
+<script>
+    "use strict";
+    //CODICE CHE MUOVE SFONDO   
+    let sinistra = 0;
+    function muoviSfondo() {
+        let sfondo = document.querySelector("body");
+        sinistra -= 10;
+        sfondo.style.backgroundPositionX = `${sinistra}px`;
+    }
+     
+    function muoviOggetti(obj1) {
+        let sinistraObj = parseInt(obj1.style.left);
+        sinistraObj -= 5;
+        obj1.style.left = `${sinistraObj}px`;
+    }
+    /*
+    function collisione(obj1, obj2) {
+let coll = true;
+let img1 = obj1.getBoundingClientRect();
+let img2 = obj2.getBoundingClientRect();
+if (img1.y > img2.y + img2.height) {
+    coll = false;
+}
+if (img2.x + img2.width < img1.x) {
+    coll = false;
+}
+if (img1.x + img1.width < img2.x) {
+    coll = false;
+}
+if (img1.y + img1.height < img2.y) {
+    coll = false;
+}
+return coll;
+}
+*/
+    let blocco = document.createElement("div");
+    function posizionaBlocchi() {
+        let padre = document.getElementsByTagName("body")[0];
+        blocco.classList.add("classeBlocco");
+        padre.appendChild(blocco);
+    }
+    let timerSfondo = 1;
+    let timerOggetti = 1;
+    let yCubo = 40;
+    function inter(mkz) {
+        let cubo = document.querySelector("img");
+        if (mkz.key == " ") {
+            yCubo += 250;
+            cubo.style.bottom = yCubo + "px";
+            if (timerSfondo == 1) {
+                timerSfondo = window.setInterval(muoviSfondo, 10);
+            }
+            if (timerOggetti == 1) {
+                timerOggetti = window.setInterval(()=>muoviOggetti(blocco), 10);
+               
+            }
+        }
+    }
+
+</script>
 
 </html>
