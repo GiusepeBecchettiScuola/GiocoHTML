@@ -5,111 +5,366 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Geometry Dash</title>
-    <style>
-        body {
-            position: fixed;
-            background: url(GeoSfondo2.png);
-            background-repeat: repeat-x;
-
-        }
-
-        #cubo {
-            width: 100px;
-            height: 100px;
-            left: 30px;
-            right: 10px;
-            bottom: 45px;
-            position: fixed;
-        }
-
-        #barraNera {
-            background-color: black;
-            width: 100%;
-            position: fixed;
-            top: 95%;
-            left: 0;
-            height: 50px;
-        }
-
-        .classeBlocco {
-            background-color: black;
-            border-color: white;
-            border-radius: 6px;
-            border-width: 10px;
-            width: 100px;
-            height: 100px;
-            position: fixed;
-            left: 400px;
-            bottom: 50px;
-
-        }
-    </style>
-
+    <link rel="stylesheet" href="geometry.css">
 </head>
 
-<body onkeydown="inter(event)" onload="posizionaBlocchi()">
-    <img src="Cube001.webp" id="cubo" alt="cubo">
+<body>
+
+    <div class="wrapper">
+        <img src="img/Geometry_Dash.png" alt="Titolo" id="titolo">
+        <button onclick="startGame()" class="pulsanti">PLAY</button>
+        <button onclick="ins()" class="pulsanti">INSTRUCTIONS</button>
+    </div>
+
+    <div id="instructions">
+        <h2>Instructions</h2>
+        <p>Press ENTER to start moving.</p>
+        <p>Press SPACE to jump.</p>
+        <p>Avoid black blocks front the front.</p>
+        <p>Avoid red blocks at all costs!!!!.</p>
+        <button onclick="closeInstructions()">Close</button>
+    </div>
+    <div id="win">
+        <h1>YOU WIN</h1>
+        <button onclick="restartGame()">Restart</button>
+        <button onclick="showMenu()">Menu</button>
+    </div>
+    <button id="pauseButton" onclick="togglePause()">PAUSE</button>
+
+    <div id="pauseMenu">
+        <button onclick="resumeGame()">RESUME</button>
+        <button onclick="restartGame()">RESTART</button>
+        <button onclick="showMenu()">MENU</button>
+    </div>
+
+    <img src="img/Cube002.png" id="cubo" alt="cubo">
     <div id="barraNera"></div>
+    <audio src="sound/1-02. Stereo Madness.mp3"></audio>
+    <audio src="sound/geometry-dash-death-sound-effect.mp3"></audio>
 </body>
+
+<script src="livello1.js"></script>
 <script>
     "use strict";
-    //CODICE CHE MUOVE SFONDO   
+    let gameStarted = false;
+    let gamePlaying = false;
+    let sopraTerra = true;
+    let sopraBlocco = false;
+    let paused = false;
+
+    let audioLivello = document.getElementsByTagName("audio")[0];
+    let audioMorte = document.getElementsByTagName("audio")[1];
+
+    function startGame() {
+        let titolo = document.getElementById("titolo");
+        let playButton = document.querySelectorAll("button")[0];
+        let insButton = document.querySelectorAll("button")[1];
+        let menuButton = document.getElementById("menuButton");
+        let pauseButton = document.getElementById("pauseButton");
+
+        titolo.style.visibility = "hidden";
+        playButton.style.visibility = "hidden";
+        insButton.style.visibility = "hidden";
+        pauseButton.style.display = "block";
+        win.style.display = "visible";
+
+        posizionaBlocchi();
+        posizionaLava();
+        posizionaBandiera();
+        gameStarted = true;
+        document.addEventListener('keydown', inter);
+    }
+    //FUNZIONI PULSANTE INSTRUCTIONS
+    function ins() {
+        let instructions = document.getElementById("instructions");
+        instructions.style.display = "block";
+    }
+    function closeInstructions() {
+        let instructions = document.getElementById("instructions");
+        instructions.style.display = "none";
+    }
+    //*************************************************************************************************
+    //FUNZIONE PULSANTE MENU
+    function showMenu() {
+        let titolo = document.getElementById("titolo");
+        let playButton = document.querySelectorAll("button")[0];
+        let insButton = document.querySelectorAll("button")[1];
+        let menuButton = document.getElementById("menuButton");
+        let pauseButton = document.getElementById("pauseButton");
+        let pauseMenu = document.getElementById("pauseMenu");
+
+        titolo.style.visibility = "visible";
+        playButton.style.visibility = "visible";
+        insButton.style.visibility = "visible";
+        pauseButton.style.display = "none";
+        pauseMenu.style.display = "none";
+
+        riavviaGioco();
+        gameStarted = false;
+        gamePlaying = false;
+    }
+    function togglePause() {
+        let pauseMenu = document.getElementById("pauseMenu");
+        if (paused) {
+            resumeGame();
+        } else {
+            pauseGame();
+        }
+    }
+    function pauseGame() {
+        paused = true;
+        clearInterval(timerSfondo);
+        clearInterval(timerOggetti);
+        clearInterval(timerLava);
+        clearInterval(timerBandiera);
+        gamePlaying = false;
+        document.getElementById("pauseMenu").style.display = "block";
+    }
+    function resumeGame() {
+        paused = false;
+        gamePlaying = true;
+        document.getElementById("pauseMenu").style.display = "none";
+        timerSfondo = setInterval(muoviSfondo, 8);
+        timerOggetti = setInterval(muoviOggetti, 8);
+        timerLava = setInterval(muoviLava, 8);
+        timerBandiera = setInterval(muoviBandiera, 8);
+    }
+    function restartGame() {
+        paused = false;
+        gamePlaying = true;
+        document.getElementById("pauseMenu").style.display = "none";
+        riavviaGioco();
+        startGame();
+    }
+    function schermataVittoria() {
+        let win = document.getElementById("win");
+        win.style.display = "visible";
+    }
+    //FUNZIONE MUOVI SFONDO
     let sinistra = 0;
     function muoviSfondo() {
         let sfondo = document.querySelector("body");
-        sinistra -= 10;
+        sinistra -= 5;
         sfondo.style.backgroundPositionX = `${sinistra}px`;
     }
-     
-    function muoviOggetti(obj1) {
-        let sinistraObj = parseInt(obj1.style.left);
-        sinistraObj -= 5;
-        obj1.style.left = `${sinistraObj}px`;
+    //*************************************************************************************************
+    //FUNZIONE MUOVI LAVA
+    function muoviLava() {
+        lavas.forEach(lava => {
+            let sinistraLava = parseInt(lava.style.left);
+            sinistraLava -= 5;
+            lava.style.left = `${sinistraLava}px`;
+        });
+        controllaCollisioni();
     }
-    /*
-    function collisione(obj1, obj2) {
-let coll = true;
-let img1 = obj1.getBoundingClientRect();
-let img2 = obj2.getBoundingClientRect();
-if (img1.y > img2.y + img2.height) {
-    coll = false;
-}
-if (img2.x + img2.width < img1.x) {
-    coll = false;
-}
-if (img1.x + img1.width < img2.x) {
-    coll = false;
-}
-if (img1.y + img1.height < img2.y) {
-    coll = false;
-}
-return coll;
-}
-*/
-    let blocco = document.createElement("div");
-    function posizionaBlocchi() {
-        let padre = document.getElementsByTagName("body")[0];
-        blocco.classList.add("classeBlocco");
-        padre.appendChild(blocco);
+    //FUNZIONE MUOVI LAVA
+    function muoviBandiera() {
+        bandiere.forEach(bandiera => {
+            let sinistraBandiera = parseInt(bandiera.style.left);
+            sinistraBandiera -= 5;
+            bandiera.style.left = `${sinistraBandiera}px`;
+        })
+        controllaCollisioni();
     }
-    let timerSfondo = 1;
-    let timerOggetti = 1;
+    //*************************************************************************************************
+    //FUNZIONE MUOVI OGGETTI
+    function muoviOggetti() {
+        let cubo = document.querySelector("#cubo");
+        let cuboRect = cubo.getBoundingClientRect();
+        blocchi.forEach(blocco => {
+            let sinistraBlocco = parseInt(blocco.style.left);
+            sinistraBlocco -= 5;
+            blocco.style.left = `${sinistraBlocco}px`;
+        });
+        controllaCollisioni();
+        if (cuboRect.bottom + 50 > 871) {
+            sopraTerra = true;
+        }
+    }
+    //*************************************************************************************************
+    function gravitaSlide() {
+        let cubo = document.querySelector("#cubo");
+        let cuboRect = cubo.getBoundingClientRect();
+        blocchi.forEach(blocco => {
+            let bloccoRect = blocco.getBoundingClientRect();
+            if (cuboRect.left < bloccoRect.left + bloccoRect.width && cuboRect.right > bloccoRect.left) {
+                cubo.style.bottom = `${871 - bloccoRect.top + 42}px`;
+            }
+        });
+    }
+    function gravitaTorna() {
+        let cubo = document.querySelector("#cubo");
+        let cuboRect = cubo.getBoundingClientRect();
+        let cuboStyleBottom = parseInt(window.getComputedStyle(cubo).bottom);
+
+        blocchi.forEach(blocco => {
+            let bloccoRect = blocco.getBoundingClientRect();
+            if (cuboRect.right > bloccoRect.right) {
+                cubo.style.bottom = 40 + "px";
+            }
+        });
+    }
+
+    //FUNZIONE CONTROLLO COLLISSIONI
+    function controllaCollisioni() {
+        let cubo = document.querySelector("#cubo");
+        blocchi.forEach(blocco => {
+            if (collisioneLaterale(cubo, blocco)) {
+                riavviaGioco();
+                audioMorte.play();
+            }
+            if (collisioneSuperiore(cubo, blocco)) {
+                gravitaSlide();
+                sopraBlocco = true;
+                sopraTerra = false;
+            }
+            if (collisioneFinale(cubo, blocco)) {
+                gravitaTorna();
+                sopraBlocco = false;
+            }
+        });
+        lavas.forEach(lava => {
+            if (collisioneTotale(cubo, lava)) {
+                riavviaGioco();
+                audioMorte.play();
+            }
+        });
+        bandiere.forEach(bandiera => {
+            if (collisioneTotale(cubo, bandiera)) {
+                schermataVittoria();
+                riavviaGioco
+            }
+        });
+    }
+
+    //*************************************************************************************************
+    //FUNZIONE COLLISIONE LATERALE
+    function collisioneLaterale(obj1, obj2) {
+        let cubo = obj1.getBoundingClientRect();
+        let blocco = obj2.getBoundingClientRect();
+        return (
+            cubo.x + cubo.width == blocco.x
+            &&
+            cubo.bottom > blocco.top &&
+            cubo.top < blocco.bottom
+        );
+    }
+    //*************************************************************************************************
+    //FUNZIONE COLLISIONE DALL'ALTO
+    function collisioneSuperiore(obj1, obj2) {
+        let cubo = obj1.getBoundingClientRect();
+        let blocco = obj2.getBoundingClientRect();
+        return (
+            cubo.y + cubo.height > blocco.y &&
+            cubo.y + cubo.height < blocco.y + 30 &&
+            cubo.x + cubo.width > blocco.x &&
+            cubo.x < blocco.x + blocco.width
+        );
+    }
+    function collisioneFinale(obj1, obj2) {
+        let cubo = obj1.getBoundingClientRect();
+        let blocco = obj2.getBoundingClientRect();
+        return (
+            cubo.right > blocco.right + cubo.width &&
+            cubo.right < blocco.right + 120 &&
+            cubo.bottom + cubo.height + 10 > blocco.bottom
+        );
+    }
+    function collisioneTotale(obj1, obj2) {
+        let coll = true;
+        let img1 = obj1.getBoundingClientRect();
+        let img2 = obj2.getBoundingClientRect();
+        if (img1.y > img2.y + img2.height) {
+            coll = false;
+        }
+        if (img2.x + img2.width < img1.x) {
+            coll = false;
+        }
+        if (img1.x + img1.width < img2.x) {
+            coll = false;
+        }
+        if (img1.y + img1.height < img2.y) {
+            coll = false;
+        }
+        return coll;
+    }
+    //************************************************************************************************
+    //FUNZIONE RIAVVIA GIOCO
+    function riavviaGioco() {
+        clearInterval(timerLava);
+        clearInterval(timerOggetti);
+        clearInterval(timerSfondo);
+        clearInterval(timerBandiera);
+        audioLivello.pause();
+
+        let cubo = document.querySelector("#cubo");
+        yCubo = 40;
+        rotazione = 0;
+        cubo.style.bottom = `${yCubo}px`;
+        cubo.style.transform = `rotate(${rotazione}deg)`;
+        blocchi.forEach(blocco => {
+            blocco.style.left = blocco.dataset.posizioneOriginaleX + "px";
+            blocco.style.bottom = blocco.dataset.posizioneOriginaleY + "px";
+        });
+        lavas.forEach(lava => {
+            lava.style.left = lava.dataset.posizioneOriginaleX + "px";
+            lava.style.bottom = lava.dataset.posizioneOriginaleY + "px";
+            lava.style.width = lava.dataset.widthOriginale + "px";
+        });
+        bandiere.forEach(bandiera => {
+            bandiera.style.left = bandiera.dataset.posizioneOriginaleX + "px";
+            bandiera.style.bottom = bandiera.dataset.posizioneOriginaleY + "px";
+            bandiera.style.width = bandiera.dataset.widthOriginale + "px";
+        });
+        gameStarted = true;
+        gamePlaying = false;
+    }
+    //*************************************************************************************************
+    //FUNZIONE TIMER PRESSIONE PULSANTE
+    let timerSfondo;
+    let timerOggetti;
+    let timerLava;
+    let timerBandiera;
     let yCubo = 40;
+    let cCubo = 0;
+    let rotazione = 0;
+    let bloccoRect;
     function inter(mkz) {
-        let cubo = document.querySelector("img");
-        if (mkz.key == " ") {
-            yCubo += 250;
-            cubo.style.bottom = yCubo + "px";
-            if (timerSfondo == 1) {
-                timerSfondo = window.setInterval(muoviSfondo, 10);
+        let cubo = document.querySelector("#cubo");
+        let cuboRect = cubo.getBoundingClientRect();
+        blocchi.forEach(blocco => {
+            bloccoRect = blocco.getBoundingClientRect();
+        });
+        if (gameStarted && !gamePlaying && mkz.key == "Enter") {
+            gamePlaying = true;
+            audioLivello.play();
+            timerSfondo = setInterval(muoviSfondo, 8);
+            timerOggetti = setInterval(muoviOggetti, 8);
+            timerLava = setInterval(muoviLava, 8);
+            timerBandiera = setInterval(muoviBandiera, 8);
+        }
+        if (gamePlaying && (sopraBlocco || sopraTerra) && mkz.key == " ") {
+            if (cCubo == 0) {
+                yCubo += 200 + (871 - cuboRect.bottom);
+                rotazione += 90;
+                cubo.style.bottom = yCubo + "px";
+                cubo.style.transform = `rotate(${rotazione}deg)`;
+                setTimeout(() => {
+                    yCubo -= 200 + (871 - cuboRect.bottom);
+                    cubo.style.bottom = yCubo + "px";
+                    cCubo = 0;
+                    sopraBlocco = false;
+                    sopraTerra = false;
+                }, 500);
+                cCubo = 1;
             }
-            if (timerOggetti == 1) {
-                timerOggetti = window.setInterval(()=>muoviOggetti(blocco), 10);
-               
-            }
+        }
+        if (mkz.key == "Escape") {
+            togglePause();
         }
     }
 
 </script>
+
 
 </html>
