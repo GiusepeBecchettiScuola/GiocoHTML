@@ -14,9 +14,8 @@ body {
 #cubo {
     width: 100px;
     height: 100px;
-    left: 30px;
-    right: 10px;
-    bottom: 45px;
+    left: 3vw;
+    bottom: 4vh;
     position: fixed;
     transition: bottom 0.3s ease-in-out, transform 0.3s ease-in-out;
 }
