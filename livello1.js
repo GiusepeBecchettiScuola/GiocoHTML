@@ -1,4 +1,4 @@
-let blocchi = [];
+
 function generaBlocco(posizioneX, posizioneY, width = 100) {
     let blocco = document.createElement("div");
     blocco.style.left = posizioneX + "px";
@@ -12,7 +12,7 @@ function generaBlocco(posizioneX, posizioneY, width = 100) {
     blocchi.push(blocco);
 }
 
-let lavas = [];
+
 function generaLava(posizioneX, posizioneY, width) {
     let lava = document.createElement("div");
     lava.style.left = posizioneX + "px";
@@ -25,7 +25,7 @@ function generaLava(posizioneX, posizioneY, width) {
     document.body.appendChild(lava);
     lavas.push(lava);
 }
-let bandiere = [];
+
 function generaBandiera(posizioneX, posizioneY) {
     let bandiera = document.createElement("img");
     bandiera.src = "img/image-removebg-preview.png";

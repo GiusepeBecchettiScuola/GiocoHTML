@@ -16,18 +16,26 @@
         <button onclick="ins()" class="pulsanti">INSTRUCTIONS</button>
     </div>
 
+    <div id="pulsantiLivelli">
+        <button onclick="loadLevel(1)" class="pulsanti">Level 1</button>
+        <button onclick="loadLevel(2)" class="pulsanti">Level 2</button>
+        <button onclick="loadLevel(3)" class="pulsanti">Level 3</button>
+    </div>
+
+
     <div id="instructions">
         <h2>Instructions</h2>
         <p>Press ENTER to start moving.</p>
         <p>Press SPACE to jump.</p>
         <p>Avoid black blocks front the front.</p>
         <p>Avoid red blocks at all costs!!!!.</p>
-        <button onclick="closeInstructions()">Close</button>
+        <p>Touch the flag to win.</p>
+        <button onclick="closeInstructions()" id="closeInstructions">Close</button>
     </div>
     <div id="win">
         <h1>YOU WIN</h1>
-        <button onclick="restartGame()">Restart</button>
-        <button onclick="showMenu()">Menu</button>
+        <button onclick="restartGame()" class="pulsanti">Restart</button>
+        <button onclick="showMenu()" class="pulsanti">Menu</button>
     </div>
     <button id="pauseButton" onclick="togglePause()">PAUSE</button>
 
@@ -44,6 +52,9 @@
 </body>
 
 <script src="livello1.js"></script>
+<script src="livello2.js"></script>
+<script src="livello3.js"></script>
+
 <script>
     "use strict";
     let gameStarted = false;
@@ -51,28 +62,91 @@
     let sopraTerra = true;
     let sopraBlocco = false;
     let paused = false;
+    let livelloVinto = false;
+
+    let blocchi = [];
+    let lavas = [];
+    let bandiere = [];
 
     let audioLivello = document.getElementsByTagName("audio")[0];
     let audioMorte = document.getElementsByTagName("audio")[1];
 
     function startGame() {
-        let titolo = document.getElementById("titolo");
+
         let playButton = document.querySelectorAll("button")[0];
         let insButton = document.querySelectorAll("button")[1];
-        let menuButton = document.getElementById("menuButton");
-        let pauseButton = document.getElementById("pauseButton");
 
-        titolo.style.visibility = "hidden";
+        let pauseButton = document.getElementById("pauseButton");
+        let pulsantiLivelli = document.getElementById("pulsantiLivelli");
+
         playButton.style.visibility = "hidden";
         insButton.style.visibility = "hidden";
-        pauseButton.style.display = "block";
-        win.style.display = "visible";
+        pulsantiLivelli.style.display = "block";
+        pauseButton.style.display = "none";
 
+
+        gameStarted = false;
+        document.addEventListener('keydown', inter);
+    }
+    function loadLevel(level) {
+
+        startGame();
+        switch (level) {
+            case 1:
+                livello1();
+                break;
+            case 2:
+                livello2();
+                break;
+            case 3:
+                livello3();
+                break;
+        }
+    }
+    function livello1() {
+        let pulsantiLivelli = document.getElementById("pulsantiLivelli");
+        pulsantiLivelli.style.display = "none";
+        let titolo = document.getElementById("titolo");
+        titolo.style.display = "none";
+        let pauseButton = document.getElementById("pauseButton");
+        pauseButton.style.display = "block";
+        blocchi = [];
+        lavas = [];
+        bandiere = [];
+        gameStarted = true;
         posizionaBlocchi();
         posizionaLava();
         posizionaBandiera();
+    }
+    function livello2() {
+        let pulsantiLivelli = document.getElementById("pulsantiLivelli");
+        pulsantiLivelli.style.display = "none";
+        let titolo = document.getElementById("titolo");
+        titolo.style.display = "none";
+        let pauseButton = document.getElementById("pauseButton");
+        pauseButton.style.display = "block";
+        blocchi = [];
+        lavas = [];
+        bandiere = [];
         gameStarted = true;
-        document.addEventListener('keydown', inter);
+        posizionaBlocchi2();
+        posizionaLava2();
+        posizionaBandiera2();
+    }
+    function livello3() {
+        let pulsantiLivelli = document.getElementById("pulsantiLivelli");
+        pulsantiLivelli.style.display = "none";
+        let titolo = document.getElementById("titolo");
+        titolo.style.display = "none";
+        let pauseButton = document.getElementById("pauseButton");
+        pauseButton.style.display = "block";
+        blocchi = [];
+        lavas = [];
+        bandiere = [];
+        gameStarted = true;
+        posizionaBlocchi3();
+        posizionaLava3();
+        posizionaBandiera3();
     }
     //FUNZIONI PULSANTE INSTRUCTIONS
     function ins() {
@@ -92,16 +166,29 @@
         let menuButton = document.getElementById("menuButton");
         let pauseButton = document.getElementById("pauseButton");
         let pauseMenu = document.getElementById("pauseMenu");
+        let win = document.getElementById("win");
 
         titolo.style.visibility = "visible";
         playButton.style.visibility = "visible";
         insButton.style.visibility = "visible";
+        titolo.style.display = "block"
         pauseButton.style.display = "none";
         pauseMenu.style.display = "none";
+        win.style.display = "none";
 
         riavviaGioco();
         gameStarted = false;
         gamePlaying = false;
+
+        blocchi.forEach(blocco => {
+            blocco.style.display = "none";
+        });
+        lavas.forEach(lava => {
+            lava.style.display = "none";
+        });
+        bandiere.forEach(bandiera => {
+            bandiera.style.display = "none";
+        });
     }
     function togglePause() {
         let pauseMenu = document.getElementById("pauseMenu");
@@ -119,6 +206,7 @@
         clearInterval(timerBandiera);
         gamePlaying = false;
         document.getElementById("pauseMenu").style.display = "block";
+        audioLivello.pause();
     }
     function resumeGame() {
         paused = false;
@@ -128,17 +216,20 @@
         timerOggetti = setInterval(muoviOggetti, 8);
         timerLava = setInterval(muoviLava, 8);
         timerBandiera = setInterval(muoviBandiera, 8);
+        audioLivello.play();
     }
     function restartGame() {
+        let pulsantiLivelli = document.getElementById("pulsantiLivelli");
+        pulsantiLivelli.style.display = "none";
         paused = false;
         gamePlaying = true;
         document.getElementById("pauseMenu").style.display = "none";
+        document.getElementById("win").style.display = "none";
         riavviaGioco();
-        startGame();
     }
     function schermataVittoria() {
         let win = document.getElementById("win");
-        win.style.display = "visible";
+        win.style.display = "block";
     }
     //FUNZIONE MUOVI SFONDO
     let sinistra = 0;
@@ -232,7 +323,11 @@
         bandiere.forEach(bandiera => {
             if (collisioneTotale(cubo, bandiera)) {
                 schermataVittoria();
-                riavviaGioco
+                clearTimeout(timerSfondo);
+                clearTimeout(timerOggetti);
+                clearTimeout(timerLava);
+                clearTimeout(timerBandiera);
+                audioLivello.pause();
             }
         });
     }
