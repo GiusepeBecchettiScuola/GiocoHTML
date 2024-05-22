@@ -9,7 +9,7 @@ function generaBlocco(posizioneX, posizioneY, width = 100) {
     blocco.dataset.widthOriginale = width;
     blocco.classList.add("classeBlocco");
     document.body.appendChild(blocco);
-    blocchi.push(blocco);
+    vettoreBlocchi.push(blocco);
 }
 
 
@@ -23,7 +23,7 @@ function generaLava(posizioneX, posizioneY, width) {
     lava.dataset.widthOriginale = width;
     lava.classList.add("classeLava");
     document.body.appendChild(lava);
-    lavas.push(lava);
+    vettoreLava.push(lava);
 }
 
 function generaBandiera(posizioneX, posizioneY) {
@@ -36,42 +36,27 @@ function generaBandiera(posizioneX, posizioneY) {
     bandiera.dataset.posizioneOriginaleY = posizioneY;
     bandiera.classList.add("classeBandiera");
     document.body.appendChild(bandiera);
-    bandiere.push(bandiera);
+    vettoreBandiere.push(bandiera);
 }
 
 function posizionaBlocchi() {
-    // Inizio del livello
-    generaBlocco(600, 47, 200);
+    generaBlocco(600, 47, 300);
     generaBlocco(1200, 47, 300);
-    generaBlocco(1600, 47, 200);
-    generaBlocco(2200, 47, 300);
-    generaBlocco(2800, 230, 300); // Blocco elevato
-    generaBlocco(3500, 230, 200); // Blocco elevato
-    generaBlocco(3900, 340, 150); // Blocco ancora più elevato
-    generaBlocco(4200, 47, 500);
-    generaBlocco(5000, 100, 200);
-    generaBlocco(5500, 47, 300);
-    generaBlocco(6000, 230, 300);
-    generaBlocco(6600, 47, 300);
+    generaBlocco(1800, 47, 300);
+    generaBlocco(2400, 230, 300);
+    generaBlocco(3000, 230, 300);
+    generaBlocco(3400, 230, 250);
+    generaBlocco(4000, 47, 500);
+    generaBlocco(4700, 100, 300);
+    generaBlocco(5300, 47, 300);
+    generaBlocco(5900, 230, 300);
+    generaBlocco(6500, 47, 300);
+
 }
-
 function posizionaLava() {
-    // Inizio del livello
-    generaLava(800, 47, 400); // Lava tra il primo e il secondo blocco
-    generaLava(1500, 47, 500); // Lava tra il secondo e il terzo blocco
-    generaLava(1800, 47, 400); // Lava tra il terzo e il quarto blocco
-    generaLava(2500, 47, 300); // Lava tra il quarto e il quinto blocco elevato
-    generaLava(3200, 47, 300); // Lava tra il quinto e il sesto blocco elevato
-    generaLava(3700, 47, 200); // Lava tra il sesto e il settimo blocco elevato
-    generaLava(4050, 47, 400); // Lava tra il settimo e l'ottavo blocco
-    generaLava(4700, 47, 300); // Lava tra l'ottavo e il nono blocco
-    generaLava(5200, 47, 300); // Lava tra il nono e il decimo blocco
-    generaLava(5800, 47, 400); // Lava tra il decimo e l'undicesimo blocco
-    generaLava(6600, 47, 300); // Lava tra l'undicesimo e il dodicesimo blocco
-
+    generaLava(400, 47, 6500);
 }
 
 function posizionaBandiera() {
-    // Fine del livello
-    generaBandiera(7500, 47); // Bandiera di fine livello
+    generaBandiera(7500, 47);
 }

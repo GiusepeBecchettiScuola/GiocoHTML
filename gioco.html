@@ -9,44 +9,38 @@
 </head>
 
 <body>
-
     <div class="wrapper">
         <img src="img/Geometry_Dash.png" alt="Titolo" id="titolo">
         <button onclick="startGame()" class="pulsanti">PLAY</button>
         <button onclick="ins()" class="pulsanti">INSTRUCTIONS</button>
     </div>
-
     <div id="pulsantiLivelli">
         <button onclick="loadLevel(1)" class="pulsanti">Level 1</button>
         <button onclick="loadLevel(2)" class="pulsanti">Level 2</button>
         <button onclick="loadLevel(3)" class="pulsanti">Level 3</button>
     </div>
-
-
     <div id="instructions">
         <h2>Instructions</h2>
         <p>Press ENTER to start moving.</p>
         <p>Press SPACE to jump.</p>
         <p>Avoid black blocks front the front.</p>
-        <p>Avoid red blocks at all costs!!!!.</p>
+        <p>Avoid the lava at all costs!!!!.</p>
         <p>Touch the flag to win.</p>
         <button onclick="closeInstructions()" id="closeInstructions">Close</button>
     </div>
-    <div id="win">
+    <div id="schermataVittoria">
         <h1>YOU WIN</h1>
         <button onclick="restartGame()" class="pulsanti">Restart</button>
         <button onclick="showMenu()" class="pulsanti">Menu</button>
     </div>
     <button id="pauseButton" onclick="togglePause()">PAUSE</button>
-
     <div id="pauseMenu">
         <button onclick="resumeGame()">RESUME</button>
         <button onclick="restartGame()">RESTART</button>
         <button onclick="showMenu()">MENU</button>
     </div>
-
     <img src="img/Cube002.png" id="cubo" alt="cubo">
-    <div id="barraNera"></div>
+    <div id="pavimento"></div>
     <audio src="sound/1-02. Stereo Madness.mp3"></audio>
     <audio src="sound/geometry-dash-death-sound-effect.mp3"></audio>
 </body>
@@ -57,39 +51,44 @@
 
 <script>
     "use strict";
-    let gameStarted = false;
-    let gamePlaying = false;
-    let sopraTerra = true;
-    let sopraBlocco = false;
-    let paused = false;
-    let livelloVinto = false;
 
-    let blocchi = [];
-    let lavas = [];
-    let bandiere = [];
+    let giocoIniziato = false;
+    let giocoInMovimento = false;
+    let cuboSopraPavimento = true;
+    let cuboSopraBlocco = false;
+    let levelPaused = false;
+
+    let vettoreBlocchi = [];
+    let vettoreLava = [];
+    let vettoreBandiere = [];
 
     let audioLivello = document.getElementsByTagName("audio")[0];
     let audioMorte = document.getElementsByTagName("audio")[1];
 
     function startGame() {
-
+        // Questa funzione viene chiamata quando l'utente fa clic sul pulsante "Inizia"
+        // per iniziare il gioco.
+        // Ottiene i riferimenti ai pulsanti "Gioca" e "Instructions"
         let playButton = document.querySelectorAll("button")[0];
         let insButton = document.querySelectorAll("button")[1];
-
+        // Ottiene i riferimenti ai pulsanti "Pausa" e "Livelli"
         let pauseButton = document.getElementById("pauseButton");
         let pulsantiLivelli = document.getElementById("pulsantiLivelli");
-
+        // Nasconde i pulsanti "Gioca" e "Inserisci nome"
         playButton.style.visibility = "hidden";
         insButton.style.visibility = "hidden";
+        // Mostra i pulsanti "Pausa" e "Livelli"
         pulsantiLivelli.style.display = "block";
         pauseButton.style.display = "none";
-
-
-        gameStarted = false;
+        // Imposta la variabile giocoIniziato a false per indicare che il gioco non è ancora iniziato
+        giocoIniziato = false;
+        // Aggiunge un listener all'evento 'keydown' per rilevare i tasti premuti dall'utente
         document.addEventListener('keydown', inter);
     }
     function loadLevel(level) {
-
+        // Carica un livello specifico
+        // Parametri:
+        // - level (numero): Il numero del livello da caricare.
         startGame();
         switch (level) {
             case 1:
@@ -110,10 +109,12 @@
         titolo.style.display = "none";
         let pauseButton = document.getElementById("pauseButton");
         pauseButton.style.display = "block";
-        blocchi = [];
-        lavas = [];
-        bandiere = [];
-        gameStarted = true;
+        //pulisce completamente i 3 vettori
+        vettoreBlocchi = [];
+        vettoreLava = [];
+        vettoreBandiere = [];
+        giocoIniziato = true;
+        //posiziona in base allo script i vari oggetti
         posizionaBlocchi();
         posizionaLava();
         posizionaBandiera();
@@ -125,10 +126,12 @@
         titolo.style.display = "none";
         let pauseButton = document.getElementById("pauseButton");
         pauseButton.style.display = "block";
-        blocchi = [];
-        lavas = [];
-        bandiere = [];
-        gameStarted = true;
+        //pulisce completamente i 3 vettori
+        vettoreBlocchi = [];
+        vettoreLava = [];
+        vettoreBandiere = [];
+        giocoIniziato = true;
+        //posiziona in base allo script i vari oggetti
         posizionaBlocchi2();
         posizionaLava2();
         posizionaBandiera2();
@@ -140,77 +143,84 @@
         titolo.style.display = "none";
         let pauseButton = document.getElementById("pauseButton");
         pauseButton.style.display = "block";
-        blocchi = [];
-        lavas = [];
-        bandiere = [];
-        gameStarted = true;
+        //pulisce completamente i 3 vettori
+        vettoreBlocchi = [];
+        vettoreLava = [];
+        vettoreBandiere = [];
+        giocoIniziato = true;
+        //posiziona in base allo script i vari oggetti
         posizionaBlocchi3();
         posizionaLava3();
         posizionaBandiera3();
     }
-    //FUNZIONI PULSANTE INSTRUCTIONS
+    //Funzione pulsante istruzioni
     function ins() {
         let instructions = document.getElementById("instructions");
         instructions.style.display = "block";
     }
+    //Funzione pulsante chiudi istruzioni
     function closeInstructions() {
         let instructions = document.getElementById("instructions");
         instructions.style.display = "none";
     }
-    //*************************************************************************************************
-    //FUNZIONE PULSANTE MENU
+    //Funzione pulsante menu
     function showMenu() {
+        //Nasconde praticamente tutti gli oggeti lasciando visibili solo quelli iniziali
+        //riavvia il gioco ogni volta che si preme su menu e imposta a false le due variabili booleane per fermare il gioco
         let titolo = document.getElementById("titolo");
         let playButton = document.querySelectorAll("button")[0];
         let insButton = document.querySelectorAll("button")[1];
         let menuButton = document.getElementById("menuButton");
         let pauseButton = document.getElementById("pauseButton");
         let pauseMenu = document.getElementById("pauseMenu");
-        let win = document.getElementById("win");
+        let schermataVittoria = document.getElementById("schermataVittoria");
 
-        titolo.style.visibility = "visible";
+
         playButton.style.visibility = "visible";
         insButton.style.visibility = "visible";
         titolo.style.display = "block"
         pauseButton.style.display = "none";
         pauseMenu.style.display = "none";
-        win.style.display = "none";
+        schermataVittoria.style.display = "none";
 
         riavviaGioco();
-        gameStarted = false;
-        gamePlaying = false;
+        giocoIniziato = false;
+        giocoInMovimento = false;
 
-        blocchi.forEach(blocco => {
+        vettoreBlocchi.forEach(blocco => {
             blocco.style.display = "none";
         });
-        lavas.forEach(lava => {
+        vettoreLava.forEach(lava => {
             lava.style.display = "none";
         });
-        bandiere.forEach(bandiera => {
+        vettoreBandiere.forEach(bandiera => {
             bandiera.style.display = "none";
         });
     }
     function togglePause() {
+        //Se il gioco è in pausa lo fa continuare senno lo ferma
         let pauseMenu = document.getElementById("pauseMenu");
-        if (paused) {
+        if (levelPaused) {
             resumeGame();
         } else {
             pauseGame();
         }
     }
+    //Funzione pulsante pausa
     function pauseGame() {
-        paused = true;
+        levelPaused = true;
         clearInterval(timerSfondo);
         clearInterval(timerOggetti);
         clearInterval(timerLava);
         clearInterval(timerBandiera);
-        gamePlaying = false;
+        giocoInMovimento = false;
         document.getElementById("pauseMenu").style.display = "block";
         audioLivello.pause();
     }
+    //Funzione pulsante continua
     function resumeGame() {
-        paused = false;
-        gamePlaying = true;
+        levelPaused = false;
+        giocoInMovimento = true;
         document.getElementById("pauseMenu").style.display = "none";
         timerSfondo = setInterval(muoviSfondo, 8);
         timerOggetti = setInterval(muoviOggetti, 8);
@@ -218,109 +228,114 @@
         timerBandiera = setInterval(muoviBandiera, 8);
         audioLivello.play();
     }
+    //funzione pulsante riavvia
     function restartGame() {
         let pulsantiLivelli = document.getElementById("pulsantiLivelli");
         pulsantiLivelli.style.display = "none";
-        paused = false;
-        gamePlaying = true;
+        levelPaused = false;
+        giocoInMovimento = true;
         document.getElementById("pauseMenu").style.display = "none";
-        document.getElementById("win").style.display = "none";
+        document.getElementById("schermataVittoria").style.display = "none";
         riavviaGioco();
     }
+    //Funzione per schermata vittoria
     function schermataVittoria() {
-        let win = document.getElementById("win");
-        win.style.display = "block";
+        let schermataVittoria = document.getElementById("schermataVittoria");
+        schermataVittoria.style.display = "block";
     }
     //FUNZIONE MUOVI SFONDO
-    let sinistra = 0;
+    let sinistraSfondo = 0;
     function muoviSfondo() {
         let sfondo = document.querySelector("body");
-        sinistra -= 5;
-        sfondo.style.backgroundPositionX = `${sinistra}px`;
+        sinistraSfondo -= 5;
+        sfondo.style.backgroundPositionX = `${sinistraSfondo}px`;
     }
-    //*************************************************************************************************
     //FUNZIONE MUOVI LAVA
     function muoviLava() {
-        lavas.forEach(lava => {
+        vettoreLava.forEach(lava => {
             let sinistraLava = parseInt(lava.style.left);
             sinistraLava -= 5;
             lava.style.left = `${sinistraLava}px`;
         });
         controllaCollisioni();
     }
-    //FUNZIONE MUOVI LAVA
+    //FUNZIONE MUOVI BANDIERA
     function muoviBandiera() {
-        bandiere.forEach(bandiera => {
+        vettoreBandiere.forEach(bandiera => {
             let sinistraBandiera = parseInt(bandiera.style.left);
             sinistraBandiera -= 5;
             bandiera.style.left = `${sinistraBandiera}px`;
         })
         controllaCollisioni();
     }
-    //*************************************************************************************************
     //FUNZIONE MUOVI OGGETTI
     function muoviOggetti() {
         let cubo = document.querySelector("#cubo");
         let cuboRect = cubo.getBoundingClientRect();
-        blocchi.forEach(blocco => {
+        vettoreBlocchi.forEach(blocco => {
             let sinistraBlocco = parseInt(blocco.style.left);
             sinistraBlocco -= 5;
             blocco.style.left = `${sinistraBlocco}px`;
         });
         controllaCollisioni();
         if (cuboRect.bottom + 50 > 871) {
-            sopraTerra = true;
+            cuboSopraPavimento = true;
         }
     }
-    //*************************************************************************************************
+    //Funzione gravita in caso ci sia una collisione superiore perciò il cubo
+    //deve continuare a scorrere("slide")
     function gravitaSlide() {
         let cubo = document.querySelector("#cubo");
         let cuboRect = cubo.getBoundingClientRect();
-        blocchi.forEach(blocco => {
+        vettoreBlocchi.forEach(blocco => {
             let bloccoRect = blocco.getBoundingClientRect();
             if (cuboRect.left < bloccoRect.left + bloccoRect.width && cuboRect.right > bloccoRect.left) {
                 cubo.style.bottom = `${871 - bloccoRect.top + 42}px`;
             }
         });
     }
+    //Funzione gravita in caso il cubo abbia percorso completamente la larghezza del blocco
+    //su cui si trova e torna alla sua altezza originale
     function gravitaTorna() {
         let cubo = document.querySelector("#cubo");
         let cuboRect = cubo.getBoundingClientRect();
-        let cuboStyleBottom = parseInt(window.getComputedStyle(cubo).bottom);
-
-        blocchi.forEach(blocco => {
+        vettoreBlocchi.forEach(blocco => {
             let bloccoRect = blocco.getBoundingClientRect();
             if (cuboRect.right > bloccoRect.right) {
                 cubo.style.bottom = 40 + "px";
             }
         });
     }
-
     //FUNZIONE CONTROLLO COLLISSIONI
     function controllaCollisioni() {
         let cubo = document.querySelector("#cubo");
-        blocchi.forEach(blocco => {
+        vettoreBlocchi.forEach(blocco => {
+            //Controlla se c'è una collisione laterale tra il cubo e un blocco
             if (collisioneLaterale(cubo, blocco)) {
                 riavviaGioco();
                 audioMorte.play();
             }
+            //Controlla se c'è una collisione superiore tra il cubo e un blocco
             if (collisioneSuperiore(cubo, blocco)) {
                 gravitaSlide();
-                sopraBlocco = true;
-                sopraTerra = false;
+                cuboSopraBlocco = true;
+                cuboSopraPavimento = false;
             }
+            //Controlla se c'è una collisione finale ossia il cubo ha percorso tutto il blocco
             if (collisioneFinale(cubo, blocco)) {
                 gravitaTorna();
-                sopraBlocco = false;
+                cuboSopraBlocco = false;
             }
         });
-        lavas.forEach(lava => {
+        //Controlla se c'è una collisione da qualsiasi lato tra il cubo e la lava
+        vettoreLava.forEach(lava => {
             if (collisioneTotale(cubo, lava)) {
                 riavviaGioco();
                 audioMorte.play();
             }
         });
-        bandiere.forEach(bandiera => {
+        //Controlla se c'è una collisione da qualsiasi lato tra il cubo e la bandiera
+        vettoreBandiere.forEach(bandiera => {
             if (collisioneTotale(cubo, bandiera)) {
                 schermataVittoria();
                 clearTimeout(timerSfondo);
@@ -331,21 +346,17 @@
             }
         });
     }
-
-    //*************************************************************************************************
     //FUNZIONE COLLISIONE LATERALE
     function collisioneLaterale(obj1, obj2) {
         let cubo = obj1.getBoundingClientRect();
         let blocco = obj2.getBoundingClientRect();
         return (
-            cubo.x + cubo.width == blocco.x
-            &&
+            cubo.x + cubo.width == blocco.x &&
             cubo.bottom > blocco.top &&
             cubo.top < blocco.bottom
         );
     }
-    //*************************************************************************************************
-    //FUNZIONE COLLISIONE DALL'ALTO
+    //FUNZIONE COLLISIONE SUPERIORE
     function collisioneSuperiore(obj1, obj2) {
         let cubo = obj1.getBoundingClientRect();
         let blocco = obj2.getBoundingClientRect();
@@ -356,6 +367,7 @@
             cubo.x < blocco.x + blocco.width
         );
     }
+    //FUNZIONE COLLISIONE FINALE
     function collisioneFinale(obj1, obj2) {
         let cubo = obj1.getBoundingClientRect();
         let blocco = obj2.getBoundingClientRect();
@@ -365,26 +377,17 @@
             cubo.bottom + cubo.height + 10 > blocco.bottom
         );
     }
+    //FUNZIONE COLLISIONE DA QUALSIASI LATO
     function collisioneTotale(obj1, obj2) {
-        let coll = true;
-        let img1 = obj1.getBoundingClientRect();
-        let img2 = obj2.getBoundingClientRect();
-        if (img1.y > img2.y + img2.height) {
-            coll = false;
-        }
-        if (img2.x + img2.width < img1.x) {
-            coll = false;
-        }
-        if (img1.x + img1.width < img2.x) {
-            coll = false;
-        }
-        if (img1.y + img1.height < img2.y) {
-            coll = false;
-        }
-        return coll;
+        let rect1 = obj1.getBoundingClientRect();
+        let rect2 = obj2.getBoundingClientRect();
+        return !(rect1.x + rect1.width < rect2.x ||
+            rect1.y + rect1.height < rect2.y ||
+            rect1.x > rect2.x + rect2.width ||
+            rect1.y > rect2.y + rect2.height);
     }
-    //************************************************************************************************
     //FUNZIONE RIAVVIA GIOCO
+    //Reimposta tutte le variabili al loro stato iniziale
     function riavviaGioco() {
         clearInterval(timerLava);
         clearInterval(timerOggetti);
@@ -393,67 +396,71 @@
         audioLivello.pause();
 
         let cubo = document.querySelector("#cubo");
-        yCubo = 40;
+        bottomCubo = 40;
         rotazione = 0;
-        cubo.style.bottom = `${yCubo}px`;
+        cubo.style.bottom = `${bottomCubo}px`;
         cubo.style.transform = `rotate(${rotazione}deg)`;
-        blocchi.forEach(blocco => {
+        vettoreBlocchi.forEach(blocco => {
             blocco.style.left = blocco.dataset.posizioneOriginaleX + "px";
             blocco.style.bottom = blocco.dataset.posizioneOriginaleY + "px";
         });
-        lavas.forEach(lava => {
+        vettoreLava.forEach(lava => {
             lava.style.left = lava.dataset.posizioneOriginaleX + "px";
             lava.style.bottom = lava.dataset.posizioneOriginaleY + "px";
             lava.style.width = lava.dataset.widthOriginale + "px";
         });
-        bandiere.forEach(bandiera => {
+        vettoreBandiere.forEach(bandiera => {
             bandiera.style.left = bandiera.dataset.posizioneOriginaleX + "px";
             bandiera.style.bottom = bandiera.dataset.posizioneOriginaleY + "px";
             bandiera.style.width = bandiera.dataset.widthOriginale + "px";
         });
-        gameStarted = true;
-        gamePlaying = false;
+        giocoIniziato = true;
+        giocoInMovimento = false;
     }
-    //*************************************************************************************************
-    //FUNZIONE TIMER PRESSIONE PULSANTE
+    //************************************************************************************************
     let timerSfondo;
     let timerOggetti;
     let timerLava;
     let timerBandiera;
-    let yCubo = 40;
-    let cCubo = 0;
+    let bottomCubo = 40;
+    let contatoreCubo = 0;
     let rotazione = 0;
     let bloccoRect;
+    //FUNZIONE TIMER PRESSIONE PULSANTE
     function inter(mkz) {
         let cubo = document.querySelector("#cubo");
         let cuboRect = cubo.getBoundingClientRect();
-        blocchi.forEach(blocco => {
+        vettoreBlocchi.forEach(blocco => {
             bloccoRect = blocco.getBoundingClientRect();
         });
-        if (gameStarted && !gamePlaying && mkz.key == "Enter") {
-            gamePlaying = true;
+        //Se il gioco è iniziatto ma non è in movimento e si preme su invio fa partire i vari timer
+        if (giocoIniziato && !giocoInMovimento && mkz.key == "Enter") {
+            giocoInMovimento = true;
             audioLivello.play();
             timerSfondo = setInterval(muoviSfondo, 8);
             timerOggetti = setInterval(muoviOggetti, 8);
             timerLava = setInterval(muoviLava, 8);
             timerBandiera = setInterval(muoviBandiera, 8);
         }
-        if (gamePlaying && (sopraBlocco || sopraTerra) && mkz.key == " ") {
-            if (cCubo == 0) {
-                yCubo += 200 + (871 - cuboRect.bottom);
+        //Se il gioco è in movimento e il cubo o è sopra un blocco o è sopra al pavimento perciò non si
+        //trova in aria, e si preme spazio, esegue il salto e la rotazione del cubo
+        if (giocoInMovimento && (cuboSopraBlocco || cuboSopraPavimento) && mkz.key == " ") {
+            if (contatoreCubo == 0) {
+                bottomCubo += 200 + (871 - cuboRect.bottom);
                 rotazione += 90;
-                cubo.style.bottom = yCubo + "px";
+                cubo.style.bottom = bottomCubo + "px";
                 cubo.style.transform = `rotate(${rotazione}deg)`;
                 setTimeout(() => {
-                    yCubo -= 200 + (871 - cuboRect.bottom);
-                    cubo.style.bottom = yCubo + "px";
-                    cCubo = 0;
-                    sopraBlocco = false;
-                    sopraTerra = false;
+                    bottomCubo -= 200 + (871 - cuboRect.bottom);
+                    cubo.style.bottom = bottomCubo + "px";
+                    contatoreCubo = 0;
+                    cuboSopraBlocco = false;
+                    cuboSopraPavimento = false;
                 }, 500);
-                cCubo = 1;
+                contatoreCubo = 1;
             }
         }
+        //Se si preme Esc richiama il menu pausa
         if (mkz.key == "Escape") {
             togglePause();
         }

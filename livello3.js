@@ -9,7 +9,7 @@ function generaBlocco3(posizioneX, posizioneY, width = 100) {
     blocco.dataset.widthOriginale = width;
     blocco.classList.add("classeBlocco");
     document.body.appendChild(blocco);
-    blocchi.push(blocco);
+    vettoreBlocchi.push(blocco);
 }
 
 
@@ -23,7 +23,7 @@ function generaLava3(posizioneX, posizioneY, width) {
     lava.dataset.widthOriginale = width;
     lava.classList.add("classeLava");
     document.body.appendChild(lava);
-    lavas.push(lava);
+    vettoreLava.push(lava);
 }
 
 function generaBandiera3(posizioneX, posizioneY) {
@@ -36,30 +36,28 @@ function generaBandiera3(posizioneX, posizioneY) {
     bandiera.dataset.posizioneOriginaleY = posizioneY;
     bandiera.classList.add("classeBandiera");
     document.body.appendChild(bandiera);
-    bandiere.push(bandiera);
+    vettoreBandiere.push(bandiera);
 }
 
 function posizionaBlocchi3() {
-
-    generaBlocco(1100, 47, 250);
-
-    generaBlocco(2100, 200, 150);
-    generaBlocco(2400, 47, 300);
-    generaBlocco(2900, 47, 200);
-    generaBlocco(3200, 47, 250);
-    generaBlocco(3600, 100, 150);
-
-    generaBlocco(5300, 47, 250);
-    generaBlocco(5700, 100, 150);
-    generaBlocco(6000, 150, 200);
-    generaBlocco(6300, 200, 150);
-    generaBlocco(6600, 47, 300);
+    generaBlocco(700, 47, 250);
+    generaBlocco(1200, 230, 200);
+    generaBlocco(1600, 47, 250);
+    generaBlocco(2200, 47, 200);
+    generaBlocco(2600, 230, 300); 
+    generaBlocco(3300, 47, 300);
+    generaBlocco(3800, 140, 250); 
+    generaBlocco(4400, 47, 400);
+    generaBlocco(5100, 47, 300);
+    generaBlocco(5700, 230, 300); 
+    generaBlocco(6300, 47, 300);
+    generaBlocco(6900, 140, 200); 
 }
 
 function posizionaLava3() {
-// Lava tra il quindicesimo e il sedicesimo blocco
+    generaLava(500, 47, 6600); 
 }
 
 function posizionaBandiera3() {
-    generaBandiera(6800, 47); // Bandiera di fine livello
+    generaBandiera(7400, 47); 
 }

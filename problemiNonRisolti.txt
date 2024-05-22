@@ -1,0 +1,20 @@
+Problemi non risolti all'interno del gioco:
+
+-Durante il salto spesso e volentieri si hanno dei bug che lo fanno ruotare su stesso e basta, questo è dovuto
+al fatto che le varie funzioni di collisione non sono esatte al millimetro
+
+-In certi casi le collisioni non rilevano un contrasto tra i due oggetti, prevalentemente solo sulla collisione superiore tra
+cubo e blocco e questo potrebbe risultare nel cubo che si conpenetra all'interno del blocco o che cada dirattamente fino a terra
+
+-Quando si perde e il gioco si riavvia potrebbe capitare che il cubo si posizioni sotto al pavimento risultando impossibile giocare
+senza dover riavviare la pagina si può ovviare a questo problema con il pulsante restart presente nel menu di pausa gioco
+
+-L'audio del livello quando si perde non rinizia da capo ma da dove si è fermato ed anche premendo il pulsante restart questo
+problema non viene risolto
+
+-Il programma vista la sua stesura utilizzando per i vari spostamenti degli oggetti i pixel invece che unità di misura costanti(vw,vh)
+risulterebbe giocabile soltanto se viene eseguito su uno schermo a risoluzione 1920x1080 su browser Chrome non a schermo intero,
+e sistema operativo windows, per quanto si è potuto testare fino ad ora
+
+P.S. : allego nella cartella principale anche un video di come risulta eseguito il programma
+nelle condizioni descritte sopra
